@@ -3,5 +3,6 @@ google-generativeai
 gunicorn
 django
 django-cors-headers
-groq
+
+
 

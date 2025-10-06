@@ -68,7 +68,7 @@ def chat(request):
             # Configure Gemini API
             genai.configure(api_key=settings.GOOGLE_API_KEY)
             model = genai.GenerativeModel(
-                model_name='gemini-2.5-pro',
+                model_name='gemini-2.0-flash',
                 generation_config={
                     'temperature': 0.7,
                     'max_output_tokens': 3024,

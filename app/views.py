@@ -8,7 +8,7 @@ import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import json
 import logging
-from groq import APIConnectionError
+
 # --- Safe import for groq (won’t crash if missing) ---
 
 

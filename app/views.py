@@ -3,6 +3,7 @@ import json
 import google.generativeai as genai
 from django.conf import settings 
 import logging
+from groq import APIConnectionError
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import logout,authenticate,login as  auth_login

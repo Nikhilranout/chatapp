@@ -10,10 +10,6 @@ import json
 import logging
 
 # --- Safe import for groq (won’t crash if missing) ---
-try:
-    from groq import APIConnectionError
-except ImportError:
-    APIConnectionError = Exception
 
 logger = logging.getLogger(__name__)
 

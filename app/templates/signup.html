@@ -1,0 +1,149 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <script src="https://kit.fontawesome.com/ccdbd762c2.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+           background-color:rgb(69, 155, 206);
+            margin: 0;
+            padding: 0;
+            color:rgb(230, 230, 230);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    
+        .login-container {
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+    
+        .login-container:hover {
+            transform: scale(1.02);
+        }
+    
+        .heading {
+            font-size: 36px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            color:rgb(69, 155, 206);;
+        }
+    
+        .input-group {
+            margin-bottom: 20px;
+        }
+    
+        .input-group input {
+            width: 93%;
+            padding: 14px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+    
+        .input-group input:focus {
+            border-color:rgb(69, 155, 206);;
+            outline: none;
+            box-shadow: 0 0 8px rgba(69, 155, 206, 0.5);
+        }
+    
+        .button {
+            width: 100%;
+            padding: 14px;
+            font-size: 18px;
+            border-radius: 8px;
+            border: none;
+            background-color:rgb(69, 155, 206);
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+    
+        .button:hover {
+            background-color:rgb(5, 100, 155);
+            transform: translateY(-2px);
+        }
+    
+        .bottom-text {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+    
+        .bottom-text a {
+            color:rgb(69, 155, 206);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+    
+        .bottom-text a:hover {
+            text-decoration: underline;
+            color:rgb(69, 155, 206);
+        }
+    
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 30px;
+            }
+            .heading {
+                font-size: 32px;
+            }
+            .button {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <p class="heading">Sign Up</p>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+        <form class="login-form" action="{% url 'signup' %}" method="post">{% csrf_token %}
+            <div class="input-group">
+                <input type="text" name="username" id="id_username" required placeholder="Enter your username" >
+                {% if fm.username.errors %}
+                    <div class="error">{{ fm.username.errors }}</div>
+                {% endif %}
+            </div>
+    
+            <div class="input-group">
+                <input type="password" name="password1" id="id_password1" required placeholder="Enter your password">
+                {% if fm.password1.errors %}
+                    <div class="error">{{ fm.password1.errors }}</div>
+                {% endif %}
+            </div>
+    
+            <div class="input-group">
+                <input type="password" name="password2" id="id_password2" required placeholder="Confirm your password">
+                {% if fm.password2.errors %}
+                    <div class="error">{{ fm.password2.errors }}</div>
+                {% endif %}
+            </div>    
+            <button class="button" type="submit">Signup</button>
+            <div class="bottom-text">
+                <p>Already have an account? <a href="/login">Login</a></p>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

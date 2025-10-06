@@ -1,0 +1,396 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+    body {
+        background: linear-gradient(135deg, #000000ff 0%, #ffffffff 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    }
+    .chat-container {
+        max-width: 950px;
+        margin: 40px auto;
+        background:linear-gradient(135deg, #000000ff 0%, #ffffffff 100%);
+        border-radius: 18px;
+        box-shadow: 0 6px 32px rgba(60,72,100,0.13), 0 1.5px 4px rgba(60,72,100,0.08);
+        padding: 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        min-height: 85vh;
+    }
+    .chat-header {
+        background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+        color: #fff;
+        padding: 22px 28px 16px 28px;
+        position: relative;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    .chat-header h4 {
+        margin: 0;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+    .chat-header small {
+        font-size: 0.98em;
+        color: #e0e7ef;
+        opacity: 0.85;
+    }
+    .clear-history {
+        background: #fff;
+        color: #3b82f6;
+        border: none;
+        border-radius: 6px;
+        padding: 4px 14px;
+        font-size: 0.95em;
+        font-weight: 500;
+        box-shadow: 0 1px 2px rgba(60,72,100,0.07);
+        transition: background 0.2s, color 0.2s;
+    }
+    .clear-history:hover {
+        background: #3b82f6;
+        color: #fff;
+    }
+    .chat-box {
+        flex: 1 1 auto;
+        padding: 24px 20px 12px 20px;
+        overflow-y: auto;
+        background:linear-gradient(135deg, #000000ff 0%, #ffffffff 100%);
+        min-height: 300px;
+    }
+    .message {
+        margin-bottom: 18px;
+        padding: 12px 16px 10px 16px;
+        border-radius: 12px;
+        max-width: 90%;
+        word-break: break-word;
+        position: relative;
+        box-shadow: 0 1px 4px rgba(60,72,100,0.05);
+        font-size: 1.04em;
+        line-height: 1.6;
+    }
+    .message.user {
+        background: linear-gradient(135deg, #000000ff 0%, #ffffffff 100%);
+        align-self: flex-end;
+        margin-left: auto;
+        color:#fff;
+        border-radius: 10px 0 10px 0 ;
+    }
+    .message.ai {
+        background: linear-gradient(135deg, #000000ff 0%, #ffffffff 100%);
+        align-self: flex-start;
+        margin-right: auto;
+        color:#fff;
+        border-radius: 10px 0 10px 0;
+    }
+    .message.error {
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fca5a5;
+    }
+    .message-meta {
+        display: flex;
+        align-items: center;
+        margin-top: 6px;
+        font-size: 0.93em;
+        color: #fcfcfcff;
+        gap: 8px;
+    }
+    .timestamp {
+        font-size: 0.92em;
+        opacity: 0.7;
+    }
+    .delete-btn {
+        background: none;
+        border: none;
+        color: #64748b;
+        font-size: 1.1em;
+        cursor: pointer;
+        padding: 0 2px;
+        transition: color 0.2s;
+    }
+    .delete-btn:hover {
+        color: #ef4444;
+    }
+    .input-area {
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+        padding: 18px 20px 18px 20px;
+        background: linear-gradient(135deg, #000000ff 0%, #ffffffff 100%);
+        border-top: 1px solid #e5e7eb;
+    }
+    .input-area textarea {
+        resize: none;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        padding: 10px 12px;
+        font-size: 1.05em;
+        background: #fff;
+        transition: border 0.2s;
+        min-height: 38px;
+        max-height: 100px;
+        width: 100%;
+        outline: none;
+    }
+    .input-area textarea:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 2px #6366f133;
+    }
+    .btn-send {
+        background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 22px;
+        font-weight: 600;
+        font-size: 1.07em;
+        box-shadow: 0 1px 4px rgba(60,72,100,0.08);
+        transition: background 0.2s, box-shadow 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+    }
+    .btn-send:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+    .btn-send:hover:not(:disabled) {
+        background: linear-gradient(90deg, #6366f1 0%, #3b82f6 100%);
+        box-shadow: 0 2px 8px rgba(60,72,100,0.13);
+    }
+    .send-text, .loading-text {
+        display: inline;
+    }
+    .loading-text {
+        display: none;
+    }
+    .error-banner {
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1px solid #fca5a5;
+        border-radius: 8px;
+        padding: 10px 16px;
+        margin-bottom: 18px;
+        font-size: 1em;
+        font-weight: 500;
+        display: none;
+    }
+    @media (max-width: 600px) {
+        .chat-container {
+            max-width: 100vw;
+            margin: 0;
+            border-radius: 0;
+            min-height: 100vh;
+        }
+        .chat-header, .input-area, .chat-box {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+    }
+    header {
+        background: #312e81;
+        color: #fff;
+        padding: 1.5rem 0;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 8px rgba(49,46,129,0.08);
+    }
+    header h1 {
+        font-family: 'Segoe UI', sans-serif;
+        font-weight: 700;
+        letter-spacing: 2px;
+        margin-bottom: 0.5rem;
+        margin-left: 20px;  
+    }
+    nav a {
+        color: #a5b4fc;
+        margin: 0 1rem;
+        text-decoration: none;
+        font-weight: 500;
+        margin-left: 20px;
+        transition: color 0.2s;
+    }
+    nav a:hover {
+        color: #fff;
+        text-decoration: none;
+    }
+        footer {
+        text-align: center;
+        color: #ffffffff;
+        padding: 1.5rem 0 0.5rem 0;
+        font-size: 0.95rem;
+        margin-top: 3rem;
+    }
+    </style>
+</head>
+    <header>
+        <h1>ChatApp</h1>
+        <nav>
+            <a href="{% url 'home' %}">Home</a>
+            <a href="/login">Login</a>
+            <a href="{% url 'signup' %}">Register</a>
+            {% if user.is_authenticated %}
+            <a href="/logout">Logout</a>
+            {% else %}
+            {% endif %}
+        </nav>
+    </header>
+<body>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <h4>AI Chat </h4>
+            <small>Powered by Gemini</small>
+            {% if chat_history %}
+                <form method="post" style="display: inline; position: absolute; top: 15px; right: 20px;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="clear_all">
+                    <button type="submit" class="clear-history" onclick="return confirm('Clear all chat history? This cannot be undone.')">Clear History</button>
+                </form>
+            {% endif %}
+        </div>
+
+        <div class="chat-box" id="chatBox">
+            {% if error_message %}
+                <div class="error-banner" id="errorBanner">{{ error_message }}</div>
+            {% endif %}
+            
+            {% for message in chat_history %}
+                <div class="message {{ message.role }}{% if message.role == 'error' %} error{% endif %}" data-index="{{ forloop.counter0 }}" data-timestamp="{{ message.timestamp|default:'' }}">
+                    <div class="content">{{ message.content|linebreaks }}</div>
+                    <div class="message-meta">
+                        <span class="timestamp" id="timestamp-{{ forloop.counter0 }}"></span>
+                        <button type="button" class="delete-btn" onclick="deleteMessage({{ forloop.counter0 }})" title="Delete this message">🗑️</button>
+                    </div>
+                </div>
+            {% endfor %}
+            
+            {% if not chat_history and not error_message %}
+                <div class="message ai">
+                    <div class="content">Hello! I'm your AI assistant powered by Google Gemini. Ask me anything to get started.</div>
+                </div>
+            {% endif %}
+        </div>
+
+        <form method="post" class="input-area" id="chatForm">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="send_message">
+            <textarea 
+                name="content" 
+                id="content" 
+                class="form-control flex-grow-1" 
+                rows="1" 
+                placeholder="Enter Your Query..." 
+                required
+                maxlength="2000"
+            ></textarea>
+            <button class="btn btn-primary btn-send" type="submit" id="sendBtn">
+                <span class="send-text">Send</span>
+                <span class="loading-text">Sending...</span>
+            </button>
+        </form>
+    </div>
+    <footer>
+        <p>&copy; 2025 ChatApp. All rights reserved.</p>
+    </footer>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Auto-resize textarea
+        const textarea = document.getElementById('content');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+        });
+
+        // Enter key to send (Shift+Enter for newline)
+        textarea.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById('chatForm').submit();
+            }
+        });
+
+        // Auto-scroll to bottom
+        function scrollToBottom() {
+            const chatBox = document.getElementById('chatBox');
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        scrollToBottom();
+
+        // Format timestamp (ISO to readable)
+        function formatTimestamp(isoString) {
+            if (!isoString) return '';
+            const date = new Date(isoString);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+        document.querySelectorAll('[id^="timestamp-"]').forEach(el => {
+            const index = el.id.split('-')[1];
+            const msg = document.querySelector(`[data-index="${index}"]`);
+            if (msg && msg.dataset.timestamp) {
+                el.textContent = formatTimestamp(msg.dataset.timestamp);
+            }
+        });
+
+        // Prevent empty submission and show loading
+        document.getElementById('chatForm').addEventListener('submit', function(e) {
+            const content = document.getElementById('content');
+            const trimmed = content.value.trim();
+            if (!trimmed || trimmed === 'Enter Your Query...') {
+                e.preventDefault();
+                return false;
+            }
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = true;
+            document.querySelector('.send-text').style.display = 'none';
+            document.querySelector('.loading-text').style.display = 'inline';
+        });
+
+        // Delete individual message
+        function deleteMessage(index) {
+            if (confirm('Delete this message? This will update the conversation context.')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.style.display = 'none';
+                form.action = window.location.pathname;  // Ensure it posts to current URL
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                form.innerHTML = `
+                    <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+                    <input type="hidden" name="action" value="delete_message">
+                    <input type="hidden" name="message_index" value="${index}">
+                `;
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        // Re-enable button on page load (in case of errors)
+        window.addEventListener('load', function() {
+            const sendBtn = document.getElementById('sendBtn');
+            if (sendBtn) {
+                sendBtn.disabled = false;
+                const sendText = document.querySelector('.send-text');
+                const loadingText = document.querySelector('.loading-text');
+                if (sendText && loadingText) {
+                    sendText.style.display = 'inline';
+                    loadingText.style.display = 'none';
+                }
+            }
+        });
+
+        // Show error banner if present
+        const errorBanner = document.getElementById('errorBanner');
+        if (errorBanner) {
+            errorBanner.style.display = 'block';
+            scrollToBottom();
+        }
+    </script>
+</body>
+</html>

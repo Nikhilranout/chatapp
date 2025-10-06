@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-wvxgmrhvjrdubpt=)^usg$gi)yhs*w94tk!sdysm&b2$p8&+9u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['chatapp-ai-5brm.onrender.com']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition

@@ -1,19 +1,12 @@
 from django.shortcuts import render,redirect
 import json
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 import google.generativeai as genai
-from google.api_core.exceptions import GoogleAPIError
 from django.conf import settings 
-from django.http import Http404
-from groq import APIConnectionError
 import logging
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import logout,authenticate,login as  auth_login
-from django.core.paginator import Paginator
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
-from django.contrib.auth.decorators import login_required
 from django.utils import timezone 
 
 def home(request):
